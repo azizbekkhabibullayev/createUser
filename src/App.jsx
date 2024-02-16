@@ -2,6 +2,8 @@ import './App.css'
 import Navbar from './assets/Navbar'
 import Footer from './assets/Footer'
 import Modal from './assets/Modal'
+import Offline from './assets/Offline'
+
 import { useState } from 'react'
 
 
@@ -9,9 +11,16 @@ import { useState } from 'react'
 function App() {
 
 
-
+  window.addEventListener("offline", (e) => {
+  setApp('none')
+  setOff(true)
+  console.log(e)
+   });
+const [app ,setApp] = useState("app") 
 const[users,setUser]=useState([])
 const [open , setOpen]=useState(false)
+const [ off , setOff]= useState(false)
+
 // user qoshish
 console.log(users)
 let addUser =(user)=>{
@@ -22,11 +31,11 @@ let addUser =(user)=>{
 }
 //userlarni ochirish 
 let deleteUser=(id)=>{
-  setUser((prev)=>{
-    return prev.filter((user)=>{
-      return user.id !== id
+    setUser((prev)=>{
+      return prev.filter((user)=>{
+        return user.id !== id
+      })
     })
-  })
 
 }
 
@@ -39,10 +48,11 @@ let closeModal = (e)=>{
      console.log(e)
 }
 
+ 
   return (
     <>
-    <div className="app" onClick={closeModal} onKeyDown={closeModal} >
-
+    <div className={app} onClick={closeModal} onKeyDown={closeModal} >
+      {off && <Offline/>}
      <Navbar users={users.length}/>
       {open && <Modal addUser={addUser}/>}
      <main className='main'>
@@ -52,6 +62,7 @@ let closeModal = (e)=>{
       </h1>
      
       {users.map((user)=>{
+        let dateIn= new Date()
         return(
           <div className="user_div" key={user.id}>
         <img src={user.image} alt="img" />
@@ -59,6 +70,7 @@ let closeModal = (e)=>{
         <h3 className="h3_text">{user.subtitle}</h3>
         <span className="job">{user.age}- {user.from} - {user.job}</span>
         <span> gender:{user.gender}</span>
+        <span>{dateIn.toDateString()}</span>
         <button className='delete' onClick={()=>deleteUser(user.id)}>delete</button>
       </div>
         )
